@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>{{ app_name }} • Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css', v=app_version) }}"/>
+</head>
+<body class="login-body">
+  <div class="login-card">
+    <small>{{ system_brand }}</small>
+    <h2>{{ app_name }}</h2>
+    <p>Entre para acompanhar pedidos, reservas, comandas e solicitações da mesa.</p>
+    {% if error %}<div class="login-error">{{ error }}</div>{% endif %}
+    <form method="post" class="login-form">
+      <label>Usuário</label>
+      <input class="input" name="username" value="admin"/>
+      <label>Senha</label>
+      <input class="input" type="password" name="password" value="admin123"/>
+      <button class="btn primary btn-lg" type="submit">Entrar no painel</button>
+    </form>
+  </div>
+</body>
+</html>

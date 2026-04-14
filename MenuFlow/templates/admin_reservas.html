@@ -1,0 +1,39 @@
+{% extends "admin_shell.html" %}
+{% set page = 'reservas' %}
+{% block content %}
+  <header class="page-head">
+    <div>
+      <small>Organização de salão</small>
+      <h2>Reservas</h2>
+      <p>Veja o calendário, confirme ou cancele e acompanhe o status das mesas reservadas.</p>
+    </div>
+    <div class="toolbar"><a class="btn primary" href="/reserve" target="_blank">Abrir página do cliente</a></div>
+  </header>
+
+  <section class="content-grid reservations-grid">
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Calendário</h3>
+          <p>Clique em um dia para ver os detalhes das reservas registradas.</p>
+        </div>
+        <div class="calendar-nav">
+          <button class="icon-btn" id="calPrev" type="button">‹</button>
+          <span class="admin-chip" id="calLabel">—</span>
+          <button class="icon-btn" id="calNext" type="button">›</button>
+        </div>
+      </div>
+      <div class="panel__body">
+        <div class="calendar-weekdays"><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div><div>Dom</div></div>
+        <div id="calGrid" class="calendar-grid"></div>
+      </div>
+    </article>
+
+    <aside class="side-stack">
+      <article class="panel">
+        <div class="panel__head"><h3>Reservas do dia</h3><span class="admin-chip">status</span></div>
+        <div class="panel__body"><div id="resList" class="order-list"></div></div>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

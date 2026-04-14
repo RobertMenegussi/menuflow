@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>{{ app_name }} • Cardápio</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/client.css', v=app_version) }}"/>
+  <style>
+    :root{
+      --primary: {{ client_primary|default('#5B5AF7') }};
+      --accent: var(--primary);
+      --accent-soft: color-mix(in srgb, var(--primary) 14%, white);
+    }
+  </style>
+</head>
+<body>
+  <div class="client-shell">
+    <header class="top-hero">
+      <div class="hero-copy">
+        <span class="hero-kicker">{{ tagline }}</span>
+        <h1>{{ app_name }}</h1>
+        <p>Escolha com calma, acompanhe o status do pedido e fale com a equipe sem sair da mesa.</p>
+      </div>
+      <div class="hero-side">
+        <button class="ghost-chip" id="openReserveBtn" type="button">Reservar mesa</button>
+      </div>
+    </header>
+
+    <div class="search-row">
+      <label class="search-box">
+        <span>🔎</span>
+        <input id="q" placeholder="Buscar prato, drink, sobremesa…" autocomplete="off"/>
+      </label>
+    </div>
+
+    <div class="spotlight-card">
+      <div>
+        <small>Destaque da casa</small>
+        <strong>Pedido simples no celular</strong>
+        <p>Monte seu pedido, envie para a cozinha e acompanhe a atualização em tempo real.</p>
+      </div>
+      <button class="btn soft" id="spotlightOpenCart" type="button">Ver pedido</button>
+    </div>
+
+    <div class="category-strip">
+      <button class="category-pill active" data-target="all">Tudo</button>
+      {% for section in menu %}
+        <button class="category-pill" data-target="{{ section['id'] }}">{{ section['label'] }}</button>
+      {% endfor %}
+    </div>
+
+    <main class="menu-feed">
+      {% for section in menu %}
+        <section class="menu-section" data-section="{{ section['id'] }}">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Categoria</span>
+              <h2>{{ section['label'] }}</h2>
+            </div>
+            <small>{{ section['items']|length }} opções</small>
+          </div>
+
+          <div class="item-list">
+            {% for item in section['items'] %}
+              <article class="food-card"
+                       data-name="{{ (item['name'] ~ ' ' ~ item['tag'])|lower }}"
+                       data-desc="{{ (item['description'] ~ ' ' ~ item['details'])|lower }}"
+                       data-item='{{ item|tojson }}'>
+                <div class="food-thumb">
+                  <img loading="lazy" src="/static/img/{{ item['image'] }}" alt="{{ item['name'] }}"/>
+                </div>
+                <div class="food-body">
+                  <div class="food-meta">
+                    <div>
+                      <div class="food-topline">
+                        <h3>{{ item['name'] }}</h3>
+                        {% if item.get('tag') %}<span class="food-tag">{{ item['tag'] }}</span>{% endif %}
+                      </div>
+                      <p>{{ item['description'] }}</p>
+                    </div>
+                    <strong class="food-price">{{ money_br(item['price_cents']) }}</strong>
+                  </div>
+                  <div class="food-actions">
+                    <button class="btn ghost more" type="button">Ver mais</button>
+                    <button class="btn primary add" type="button">
+                      <span class="plus">＋</span>
+                      <span>Adicionar</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        </section>
+      {% endfor %}
+    </main>
+  </div>
+
+  <button class="floating-cart" id="cartFab" type="button" aria-label="Abrir pedido" style="display:none">
+    <div class="floating-cart__text">
+      <small id="cartFabQty">0 itens</small>
+      <strong id="cartFabTotal">R$ 0,00</strong>
+    </div>
+    <span class="floating-cart__count" id="cartCount">0</span>
+  </button>
+
+  <nav class="bottom-bar">
+    <button class="bottom-bar__item" id="dockCart" type="button">
+      <span>🧾</span>
+      <strong>Pedido</strong>
+    </button>
+    <button class="bottom-bar__item" id="dockTrack" type="button">
+      <span>📍</span>
+      <strong>Acompanhar</strong>
+    </button>
+    <button class="bottom-bar__item" id="dockMesa" type="button">
+      <span>🙋</span>
+      <strong>Mesa</strong>
+    </button>
+    <a class="bottom-bar__item" href="/reserve">
+      <span>📅</span>
+      <strong>Reserva</strong>
+    </a>
+  </nav>
+
+  <div class="overlay" id="drawerBack"></div>
+  <aside class="sheet sheet--cart" id="drawer" aria-hidden="true">
+    <div class="sheet__handle"></div>
+    <div class="sheet__head">
+      <div>
+        <small>Pedido atual</small>
+        <h4>Seu carrinho</h4>
+      </div>
+      <button class="icon-btn" id="drawerClose" type="button">✕</button>
+    </div>
+
+    <div class="sheet__content">
+      <div class="form-grid compact-two">
+        <label class="field">
+          <span>Mesa</span>
+          <input id="tableNo" placeholder="Ex.: 12" inputmode="numeric"/>
+        </label>
+        <label class="field">
+          <span>Nome</span>
+          <input id="customerName" placeholder="Opcional"/>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>CPF/CNPJ do pagador</span>
+        <input id="customerTaxId" placeholder="Obrigatório para Pix automático" inputmode="numeric"/>
+      </label>
+      <small style="display:block;color:var(--muted);margin-top:8px">Esse dado é usado para gerar a cobrança Pix automática quando o restaurante usa Asaas.</small>
+
+      <label class="field field--textarea">
+        <span>Observação</span>
+        <textarea id="note" placeholder="Ex.: sem cebola, sem gelo, ponto da carne…"></textarea>
+      </label>
+
+      <section class="sheet-block">
+        <div class="sheet-block__head">
+          <strong>Itens do pedido</strong>
+          <small id="cartTotal">R$ 0,00</small>
+        </div>
+        <div id="cartList" class="cart-list"></div>
+      </section>
+
+      <section class="sheet-block sheet-block--tracking">
+        <div class="sheet-block__head">
+          <strong>Acompanhar pedido</strong>
+          <small id="trackHint" style="display:none">Atualizando ao vivo</small>
+        </div>
+        <div id="trackingBox" class="tracking-card">
+          <small>Nenhum pedido ativo ainda.</small>
+        </div>
+      </section>
+    </div>
+
+    <div class="sheet__foot">
+      <div class="total-box">
+        <span>Total</span>
+        <strong id="drawerTotal">R$ 0,00</strong>
+      </div>
+      <button class="btn primary btn-lg" id="sendBtn" type="button" disabled>Enviar pedido</button>
+    </div>
+  </aside>
+
+  <div class="overlay" id="actionsBack"></div>
+  <aside class="sheet sheet--actions" id="sheet">
+    <div class="sheet__handle"></div>
+    <div class="sheet__head">
+      <div>
+        <small>Atendimento rápido</small>
+        <h4>Solicitações da mesa</h4>
+      </div>
+      <button class="icon-btn" id="sheetClose" type="button">✕</button>
+    </div>
+    <div class="sheet__content">
+      <div class="quick-actions-grid">
+        <button class="quick-action" id="reqWaiter" type="button"><span>🙋</span><strong>Chamar garçom</strong></button>
+        <button class="quick-action" id="reqBill" type="button"><span>💳</span><strong>Pedir conta</strong></button>
+        <button class="quick-action" id="reqWater" type="button"><span>💧</span><strong>Água</strong></button>
+        <button class="quick-action" id="reqHelp" type="button"><span>🆘</span><strong>Preciso de ajuda</strong></button>
+      </div>
+      <p class="helper-note">Antes de enviar uma solicitação, preencha a mesa no pedido.</p>
+    </div>
+  </aside>
+
+  <div class="overlay overlay--modal" id="modalBack">
+    <div class="modal" role="dialog" aria-modal="true">
+      <button class="icon-btn modal__close" id="modalClose" type="button">✕</button>
+      <div class="modal__media"><img id="modalImg" alt=""/></div>
+      <div class="modal__body">
+        <small>Detalhes do prato</small>
+        <h3 id="modalTitle">—</h3>
+        <p id="modalDesc">—</p>
+        <div class="modal__foot">
+          <div>
+            <span>Preço</span>
+            <strong id="modalPrice">R$ 0,00</strong>
+          </div>
+          <button class="btn primary" id="modalAdd" type="button">Adicionar ao pedido</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <!-- Pix modal -->
+  <div class="overlay overlay--pix" id="pixBack">
+    <div class="pix-modal" role="dialog" aria-modal="true">
+      <button class="icon-btn pix-close" id="pixClose" type="button">✕</button>
+      <div class="pix-hero">
+        <div class="pix-glow"></div>
+        <small>Pagamento</small>
+        <h3>Pix</h3>
+        <p id="pixSubtitle">Abra o app do banco e escaneie o QR Code.</p>
+      </div>
+      <div class="pix-body">
+        <div class="pix-qr"><img id="pixQrImg" alt="QR Pix"/></div>
+        <div class="pix-amount"><span>Total</span><strong id="pixAmount">R$ 0,00</strong></div>
+        <div class="pix-actions">
+          <button class="btn ghost" id="pixCopy" type="button">Copiar código</button>
+          <button class="btn primary" id="pixIpaid" type="button">Já paguei</button>
+        </div>
+        <details class="pix-details">
+          <summary>Ver código Pix (copia e cola)</summary>
+          <textarea id="pixCode" readonly></textarea>
+        </details>
+        <div class="pix-status" id="pixStatus"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Paid confirmation overlay -->
+  <div class="paid-overlay" id="paidOverlay" aria-hidden="true">
+    <div class="paid-card" role="status" aria-live="polite">
+      <div class="check-wrap">
+        <svg class="check-svg" viewBox="0 0 52 52" aria-hidden="true">
+          <path class="check-path" d="M14 27 L23 36 L39 18"></path>
+        </svg>
+      </div>
+      <h4>Pagamento confirmado</h4>
+      <p>Obrigado! Seu pedido continua em andamento.</p>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/client.js', v=app_version) }}"></script>
+</body>
+</html>

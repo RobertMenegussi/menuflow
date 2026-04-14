@@ -1,0 +1,52 @@
+{% extends "admin_shell.html" %}
+{% set page = 'history' %}
+{% block content %}
+  <header class="page-head">
+    <div>
+      <small>Histórico</small>
+      <h2>Comandas fechadas</h2>
+      <p>Mesas fechadas viram histórico de faturamento, com recibo pesquisável e PDF pronto para consulta.</p>
+    </div>
+    <div class="toolbar toolbar--tight">
+      <input id="histDate" class="input" type="date"/>
+      <input id="histQuery" class="input" placeholder="Mesa, recibo ou #comanda"/>
+      <select id="histPayStatus">
+        <option value="TODOS">Todos</option>
+        <option value="PAGO">Pago</option>
+        <option value="PARCIAL">Parcial</option>
+        <option value="PENDENTE">Pendente</option>
+      </select>
+      <select id="histSort">
+        <option value="newest">Mais recentes</option>
+        <option value="oldest">Mais antigas</option>
+      </select>
+      <button class="btn ghost" id="histToday" type="button">Hoje</button>
+      <button class="btn primary" id="histRefresh" type="button">Atualizar</button>
+    </div>
+  </header>
+
+  <section class="content-grid">
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Lista</h3>
+          <p>Procure por mesa ou código do recibo sem precisar caçar no scroll.</p>
+        </div>
+        <div class="toolbar toolbar--tight"><a class="admin-chip" id="dailyPdf" href="#">PDF do dia</a><a class="admin-chip" id="histCsv" href="#">CSV do dia</a></div>
+      </div>
+      <div class="panel__body">
+        <div id="historyList" class="order-list"></div>
+      </div>
+    </article>
+
+    <aside class="side-stack">
+      <article class="panel">
+        <div class="panel__head"><h3>Dica</h3><span class="admin-chip">caixa</span></div>
+        <div class="panel__body helper-list compact">
+          <div>O código do recibo facilita localizar um fechamento em segundos.</div>
+          <div>PDF de comanda inclui horário, valor pago e resumo da forma de pagamento.</div>
+        </div>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

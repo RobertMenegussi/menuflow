@@ -1,0 +1,27 @@
+{% extends "admin_shell.html" %}
+{% set page = 'requests' %}
+{% block content %}
+  <header class="page-head">
+    <div>
+      <small>Atendimento de salão</small>
+      <h2>Solicitações da mesa</h2>
+      <p>Centralize chamados de garçom, água, conta e pedidos de ajuda em uma fila clara.</p>
+    </div>
+    <div class="toolbar"><span class="admin-chip">auto</span></div>
+  </header>
+
+  <section class="content-grid single">
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Fila de chamados</h3>
+          <p>Assim que a equipe resolver, basta concluir o chamado.</p>
+        </div>
+        <span class="admin-chip">mesa</span>
+      </div>
+      <div class="panel__body">
+        <div id="requestsList" class="order-list"></div>
+      </div>
+    </article>
+  </section>
+{% endblock %}

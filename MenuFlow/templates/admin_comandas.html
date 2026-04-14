@@ -1,0 +1,37 @@
+{% extends "admin_shell.html" %}
+{% set page = 'comandas' %}
+{% block content %}
+  <header class="page-head">
+    <div>
+      <small>Fechamento por mesa</small>
+      <h2>Comandas</h2>
+      <p>Visualize a comanda viva por mesa, com total, pago, saldo pendente e atalhos do caixa para fechar a conta no final.</p>
+    </div>
+    <div class="toolbar toolbar--tight">
+      <input id="tableSearch" class="input" placeholder="Buscar mesa ou pedido"/>
+      <select id="tableSort">
+        <option value="oldest">Mais antigas</option>
+        <option value="newest">Mais recentes</option>
+        <option value="highest">Maior valor</option>
+        <option value="due">Maior saldo</option>
+      </select>
+      <button class="btn ghost" id="tablesRefresh" type="button">Atualizar</button>
+    </div>
+  </header>
+
+  <section class="content-grid single">
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Mesas abertas</h3>
+          <p>Busque por número de mesa e imprima a comanda antes do fechamento final.</p>
+        </div>
+        <span class="admin-chip">mesa</span>
+      </div>
+      <div class="panel__body">
+        <div class="helper-list compact" style="margin-bottom:12px">Use a busca por mesa/pedido para localizar rápido, registrar pagamento e só depois fechar a comanda.</div>
+        <div id="tablesList" class="order-list"></div>
+      </div>
+    </article>
+  </section>
+{% endblock %}

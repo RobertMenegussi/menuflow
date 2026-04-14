@@ -1,0 +1,73 @@
+{% extends "admin_shell.html" %}
+{% set page = 'orders' %}
+{% block content %}
+  <header class="page-head">
+    <div>
+      <small>Operação em tempo real</small>
+      <h2>Pedidos</h2>
+      <p>Organize a fila por prioridade, mesa ou horário. Enquanto você digita, a tela segura as atualizações para não apagar nada.</p>
+    </div>
+    <div class="toolbar toolbar--tight">
+      <select id="filterStatus">
+        <option>Todos</option>
+        <option>Novo</option>
+        <option>Em preparo</option>
+        <option>Pronto</option>
+        <option>Entregue</option>
+        <option>Cancelado</option>
+      </select>
+      <input id="filterQ" class="input" placeholder="Mesa, pedido ou cliente"/>
+      <select id="orderSort">
+        <option value="oldest">Mais antigos primeiro</option>
+        <option value="newest">Mais novos primeiro</option>
+        <option value="highest">Maior valor</option>
+        <option value="table">Mesa</option>
+      </select>
+      <a class="btn ghost" id="ordersCsv" href="/admin/csv/pedidos">CSV</a>
+      <span class="admin-chip" id="editState">sincronizado</span>
+      <label class="toggle-wrap"><input type="checkbox" id="compactToggle"/> <span>modo compacto</span></label>
+    </div>
+  </header>
+
+  <section class="stats-grid" id="orderStats">
+    <article class="stat-card"><small>Pedidos ativos</small><strong id="statActive">0</strong><span>fila aberta</span></article>
+    <article class="stat-card"><small>Novos</small><strong id="statNew">0</strong><span>aguardando ação</span></article>
+    <article class="stat-card"><small>Em preparo</small><strong id="statPrep">0</strong><span>cozinha</span></article>
+    <article class="stat-card"><small>Mesas ativas</small><strong id="statTables">0</strong><span>atendimento</span></article>
+  </section>
+
+  <section class="content-grid">
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Fila de pedidos</h3>
+          <p>Ordene por antiguidade para ninguém ficar esperando demais e use a busca para encontrar uma mesa em segundos.</p>
+        </div>
+        <span class="admin-chip">ao vivo</span>
+      </div>
+      <div class="panel__body">
+        <div id="ordersList" class="order-list"></div>
+      </div>
+    </article>
+
+    <aside class="side-stack">
+      <article class="panel">
+        <div class="panel__head"><h3>Leitura rápida</h3><span class="admin-chip">fluxo</span></div>
+        <div class="panel__body helper-list compact">
+          <div>Pedidos mostram <strong>tempo de espera</strong> e status.</div>
+          <div>Quem está digitando não perde rascunho.</div>
+          <div>Busca por mesa, cliente ou número do pedido.</div>
+          <div>Modo compacto para operações cheias.</div>
+        </div>
+      </article>
+
+      <article class="panel accent-panel">
+        <div class="panel__head"><h3>Atalhos</h3><span class="admin-chip">print</span></div>
+        <div class="panel__body helper-list compact">
+          <div>Imprimir cozinha direto de cada pedido.</div>
+          <div>Arquivar pedido sem perder o histórico da mesa.</div>
+        </div>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

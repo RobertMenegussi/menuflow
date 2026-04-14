@@ -1,0 +1,40 @@
+
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Pedido #{{ order['id'] }} • Cozinha</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/print.css', v=app_version) }}"/>
+</head>
+<body onload="window.print()">
+  <div class="ticket">
+    <div class="header">
+      {% if logo_data_uri %}<img src="{{ logo_data_uri }}" alt="Logo" class="ticket-logo"/>{% endif %}
+      <h2>{{ app_name }}</h2>
+      <small>{{ restaurant_tagline }}</small>
+      <small>Cozinha • Pedido #{{ order['id'] }} • Mesa {{ order['table_no'] }} • {{ now }}</small>
+    </div>
+    <div class="hr"></div>
+
+    {% for it in items %}
+      <div class="item">
+        <div class="row">
+          <div><strong>{{ it['qty'] }}x</strong> {{ it['name'] }}</div>
+          <div></div>
+        </div>
+      </div>
+    {% endfor %}
+
+    {% if order['note'] %}
+      <div class="hr"></div>
+      <small><strong>Obs:</strong> {{ order['note'] }}</small>
+    {% endif %}
+
+    <div class="hr"></div>
+    <div class="footer">
+      Demo MenuFlow
+    </div>
+  </div>
+</body>
+</html>

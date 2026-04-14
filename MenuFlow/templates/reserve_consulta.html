@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>{{ app_name }} • Consultar reserva</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/client.css', v=app_version) }}"/>
+  <style>.reserve-shell{max-width:720px;margin:0 auto;padding:18px 16px 32px}.reserve-card{background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.92);border-radius:28px;box-shadow:var(--shadow-sm);padding:18px;margin-top:14px}.reserve-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.reserve-toast{display:none;background:#221812;color:#fff;border-radius:16px;padding:12px 14px;margin-bottom:12px}@media (max-width:640px){.reserve-grid{grid-template-columns:1fr}}</style>
+</head>
+<body>
+  <div class="reserve-shell">
+    <header class="top-hero">
+      <div class="hero-copy"><span class="hero-kicker">Consulta de reserva</span><h1>Consultar reserva</h1><p>Use telefone, CPF ou o código da reserva para consultar status ou cancelar quando necessário.</p></div>
+      <div class="hero-side"><a class="ghost-chip" href="/client">Voltar ao cardápio</a></div>
+    </header>
+    <div id="toast" class="reserve-toast"></div>
+    <div class="reserve-card"><div class="reserve-grid"><label class="field"><span>Telefone</span><input id="l_phone" placeholder="(xx) xxxxx-xxxx"/></label><label class="field"><span>CPF</span><input id="l_cpf" placeholder="opcional"/></label></div><label class="field" style="margin-top:12px"><span>Código (opcional)</span><input id="l_code" placeholder="Ex.: R-1AB2C"/></label><div style="margin-top:12px"><button class="btn primary btn-lg" id="lookupBtn" type="button">Consultar reserva</button></div></div>
+    <div id="lookupResult" class="reserve-card"><small>Use os campos acima para buscar.</small></div>
+  </div>
+  <script src="{{ url_for('static', filename='js/reserve.js', v=app_version) }}"></script>
+</body>
+</html>

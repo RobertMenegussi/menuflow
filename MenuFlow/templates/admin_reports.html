@@ -1,0 +1,59 @@
+{% extends "admin_shell.html" %}
+{% set page = 'reports' %}
+{% block content %}
+  <header class="page-head">
+    <div>
+      <small>Relatórios</small>
+      <h2>Faturamento</h2>
+      <p>Resumo do dia + exportações. Feito para caixa, recepção e conferência de fechamento.</p>
+    </div>
+    <div class="toolbar toolbar--tight">
+      <input id="repDate" class="input" type="date"/>
+      <button class="btn primary" id="repLoad" type="button">Carregar</button>
+      <a class="btn ghost" id="repPdf" href="#" target="_blank">PDF comandas</a>
+      <a class="btn ghost" id="repPayPdf" href="#" target="_blank">PDF pagamentos</a>
+      <a class="btn ghost" id="repCsvHistory" href="#">CSV comandas</a>
+      <a class="btn ghost" id="repCsvPayments" href="#">CSV pagamentos</a>
+    </div>
+  </header>
+
+  <section class="stats-grid" id="repStats">
+    <article class="stat-card"><small>Total vendido</small><strong id="repTotal">—</strong><span>comandas fechadas</span></article>
+    <article class="stat-card"><small>Total confirmado</small><strong id="repPaid">—</strong><span>caixa</span></article>
+    <article class="stat-card"><small>Comandas</small><strong id="repCount">—</strong><span>no período</span></article>
+    <article class="stat-card"><small>Ticket médio</small><strong id="repAvg">—</strong><span>por comanda</span></article>
+  </section>
+
+  <section class="content-grid">
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Quebra por forma de pagamento</h3>
+          <p>Baseado nas confirmações do caixa.</p>
+        </div>
+        <span class="admin-chip" id="repDateLabel">—</span>
+      </div>
+      <div class="panel__body">
+        <div id="repBreakdown" class="helper-list"></div>
+      </div>
+    </article>
+
+    <aside class="side-stack">
+      <article class="panel accent-panel">
+        <div class="panel__head"><h3>Exportações</h3><span class="admin-chip">PDF</span></div>
+        <div class="panel__body helper-list compact">
+          <div><a id="repPdf2" href="#" target="_blank">Fechamento de comandas</a></div>
+          <div><a id="repPayPdf2" href="#" target="_blank">Fechamento de pagamentos</a></div>
+          <div>Comanda individual no Histórico</div>
+          <div>Comprovante individual em Pagamentos</div>
+        </div>
+      </article>
+      <article class="panel">
+        <div class="panel__head"><h3>Leitura rápida</h3><span class="admin-chip">ops</span></div>
+        <div class="panel__body helper-list compact">
+          <div><strong id="repPendingTabs">—</strong> comandas ainda sem pagamento total.</div>
+        </div>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

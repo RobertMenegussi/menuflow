@@ -1,0 +1,88 @@
+{% extends "admin_shell.html" %}
+{% set page = 'payments' %}
+{% block content %}
+  <header class="page-head">
+    <div>
+      <small>Caixa</small>
+      <h2>Pagamentos</h2>
+      <p>Procure por mesa, referência, TXID ou cliente. Pix continua como está; o caixa só registra e confirma.</p>
+    </div>
+    <div class="toolbar toolbar--tight">
+      <select id="payStatus">
+        <option value="TODOS">Todos</option>
+        <option value="PENDENTE">Pendente</option>
+        <option value="INFORMADO">Cliente informou</option>
+        <option value="CONFIRMADO">Confirmado</option>
+        <option value="REJEITADO">Rejeitado</option>
+      </select>
+      <select id="payMethod">
+        <option value="TODOS">Todos métodos</option>
+        <option value="PIX_QR">Pix</option>
+        <option value="DINHEIRO">Dinheiro</option>
+        <option value="CARTAO">Cartão</option>
+        <option value="OUTRO">Outro</option>
+      </select>
+      <input id="payTable" class="input" placeholder="Mesa"/>
+      <input id="payQuery" class="input" placeholder="Ref., TXID, pedido ou cliente"/>
+      <select id="paySort">
+        <option value="newest">Mais novos</option>
+        <option value="oldest">Mais antigos</option>
+        <option value="highest">Maior valor</option>
+        <option value="table">Mesa</option>
+      </select>
+      <button class="btn ghost" id="payRefresh" type="button">Atualizar</button>
+    </div>
+  </header>
+
+  <section class="stats-grid" id="paymentStats">
+    <article class="stat-card"><small>Confirmado hoje</small><strong id="payStatConfirmed">—</strong><span>caixa</span></article>
+    <article class="stat-card"><small>Pendentes</small><strong id="payStatPending">0</strong><span>aguardando</span></article>
+    <article class="stat-card"><small>Informados</small><strong id="payStatReported">0</strong><span>cliente disse que pagou</span></article>
+    <article class="stat-card"><small>Lançamentos hoje</small><strong id="payStatCount">0</strong><span>todos os métodos</span></article>
+  </section>
+
+  <section class="content-grid">
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Lista de pagamentos</h3>
+          <p>Cada pagamento tem código de referência para localizar rápido quando o cliente mostra o comprovante.</p>
+        </div>
+        <div class="toolbar toolbar--tight"><a class="admin-chip" id="payPdfDay" href="#" target="_blank">PDF do dia</a><a class="admin-chip" id="payCsvDay" href="#">CSV do dia</a></div>
+      </div>
+      <div class="panel__body">
+        <div id="paymentsList" class="order-list"></div>
+      </div>
+    </article>
+
+    <aside class="side-stack">
+      <article class="panel">
+        <div class="panel__head"><h3>Registrar manual</h3><span class="admin-chip">caixa</span></div>
+        <div class="panel__body">
+          <div class="form-grid">
+            <label class="field"><span>Mesa</span><input id="mTable" placeholder="Ex.: 12"/></label>
+            <label class="field"><span>Método</span>
+              <select id="mMethod">
+                <option value="DINHEIRO">Dinheiro</option>
+                <option value="CARTAO">Cartão</option>
+                <option value="OUTRO">Outro</option>
+              </select>
+            </label>
+            <label class="field"><span>Valor (R$)</span><input id="mAmount" placeholder="Ex.: 35,90"/></label>
+            <label class="field"><span>Obs</span><input id="mNote" placeholder="Ex.: troco 10"/></label>
+            <button class="btn primary" id="mSave" type="button">Registrar como pago</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel accent-panel">
+        <div class="panel__head"><h3>Consulta rápida</h3><span class="admin-chip">busca</span></div>
+        <div class="panel__body helper-list compact">
+          <div>Busque por <strong>referência</strong> do pagamento.</div>
+          <div>TXID do Pix também entra na busca.</div>
+          <div>PDF individual disponível em cada lançamento.</div>
+        </div>
+      </article>
+    </aside>
+  </section>
+{% endblock %}

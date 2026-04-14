@@ -1,0 +1,41 @@
+
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Comanda • Mesa {{ table_no }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/print.css', v=app_version) }}"/>
+</head>
+<body onload="window.print()">
+  <div class="ticket">
+    <div class="header">
+      {% if logo_data_uri %}<img src="{{ logo_data_uri }}" alt="Logo" class="ticket-logo"/>{% endif %}
+      <h2>{{ app_name }}</h2>
+      <small>{{ restaurant_tagline }}</small>
+      <small>Comanda • Mesa {{ table_no }} • {{ now }}</small>
+    </div>
+    <div class="hr"></div>
+
+    {% for it in items %}
+      <div class="item">
+        <div class="row">
+          <div><strong>{{ it['qty'] }}x</strong> {{ it['name'] }}</div>
+          <div>{{ money_br(it['qty'] * it['price_cents']) }}</div>
+        </div>
+        <small>{{ money_br(it['price_cents']) }} cada</small>
+      </div>
+    {% endfor %}
+
+    <div class="hr"></div>
+    <div class="row total">
+      <div>Total</div>
+      <div>{{ money_br(total_cents) }}</div>
+    </div>
+
+    <div class="footer">
+      Obrigado! • Demo MenuFlow
+    </div>
+  </div>
+</body>
+</html>

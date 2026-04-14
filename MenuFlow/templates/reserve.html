@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>{{ app_name }} • Reserva</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/client.css', v=app_version) }}"/>
+  <style>.reserve-shell{max-width:720px;margin:0 auto;padding:18px 16px 32px}.reserve-card{background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.92);border-radius:28px;box-shadow:var(--shadow-sm);padding:18px}.reserve-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.reserve-toast{display:none;background:#221812;color:#fff;border-radius:16px;padding:12px 14px;margin-bottom:12px}.reserve-result{display:none;margin-top:14px;background:#fff8f2}.reserve-result strong{display:block;margin-bottom:6px}.reserve-code{font-size:24px;font-weight:900;color:var(--brand)}@media (max-width:640px){.reserve-grid{grid-template-columns:1fr}}</style>
+</head>
+<body>
+  <div class="reserve-shell">
+    <header class="top-hero">
+      <div class="hero-copy"><span class="hero-kicker">Reserva online</span><h1>Reservar mesa</h1><p>Preencha seus dados, escolha data e hora e acompanhe depois usando seu telefone, CPF ou código da reserva.</p></div>
+      <div class="hero-side"><a class="ghost-chip" href="/client">Voltar ao cardápio</a></div>
+    </header>
+    <div id="toast" class="reserve-toast"></div>
+    <div class="reserve-card" style="margin-top:14px">
+      <div class="reserve-grid"><label class="field"><span>Nome</span><input id="name" placeholder="Seu nome"/></label><label class="field"><span>Telefone / WhatsApp</span><input id="phone" placeholder="(xx) xxxxx-xxxx"/></label></div>
+      <div class="reserve-grid" style="margin-top:12px"><label class="field"><span>Pessoas</span><input id="party" inputmode="numeric" placeholder="Ex.: 2"/></label><label class="field"><span>CPF (opcional)</span><input id="cpf" placeholder="Somente se quiser"/></label></div>
+      <div class="reserve-grid" style="margin-top:12px"><label class="field"><span>Data</span><input id="date" type="date"/></label><label class="field"><span>Hora</span><input id="time" type="time"/></label></div>
+      <label class="field field--textarea" style="margin-top:12px"><span>Observação</span><textarea id="notes" placeholder="Ex.: aniversário, mesa mais reservada, alergia…"></textarea></label>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px"><button class="btn primary btn-lg" id="reserveBtn" type="button">Enviar reserva</button><small>Status inicial: <strong>Pendente</strong>. O restaurante confirma no painel administrativo.</small></div>
+    </div>
+    <div class="reserve-card reserve-result" id="result"><strong>Reserva enviada ✅</strong><small>Guarde esse código para consultar ou cancelar depois.</small><div class="reserve-code" id="code">—</div><div style="margin-top:12px"><a class="btn ghost" href="/reserve/consulta">Consultar reserva</a></div></div>
+  </div>
+  <script src="{{ url_for('static', filename='js/reserve.js', v=app_version) }}"></script>
+</body>
+</html>

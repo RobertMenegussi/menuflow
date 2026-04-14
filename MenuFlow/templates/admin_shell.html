@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>{{ app_name }} • Admin • {{ system_brand }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css', v=app_version) }}"/>
+</head>
+<body data-page="{{ page }}">
+  <div class="admin-layout">
+    <aside class="admin-side">
+      <div class="admin-brand">
+        <div>
+          <small>{{ system_brand }}</small>
+          <h1>MenuFlow Admin</h1>
+          <small>{{ byline }}</small>
+        </div>
+        <a class="admin-chip" href="/admin/logout">Sair</a>
+      </div>
+
+      <nav class="admin-nav">
+        <a href="/admin/pedidos" class="{{ 'active' if page=='orders' else '' }}"><span>Pedidos</span><small>fila viva</small></a>
+        <a href="/admin/comandas" class="{{ 'active' if page=='comandas' else '' }}"><span>Comandas</span><small>mesas</small></a>
+        <a href="/admin/pagamentos" class="{{ 'active' if page=='payments' else '' }}"><span>Pagamentos</span><small>caixa</small></a>
+        <a href="/admin/historico" class="{{ 'active' if page=='history' else '' }}"><span>Histórico</span><small>fechados</small></a>
+        <a href="/admin/relatorios" class="{{ 'active' if page=='reports' else '' }}"><span>Relatórios</span><small>faturamento</small></a>
+        <a href="/admin/reservas" class="{{ 'active' if page=='reservas' else '' }}"><span>Reservas</span><small>agenda</small></a>
+        <a href="/admin/solicitacoes" class="{{ 'active' if page=='requests' else '' }}"><span>Solicitações</span><small>mesa</small></a>
+        <a href="/admin/config" class="{{ 'active' if page=='settings' else '' }}"><span>Config</span><small>pix e tema</small></a>
+      </nav>
+
+      <div class="admin-side-note">
+        <strong>MenuFlow • PARADevs</strong>
+        <p>Painel padrão do sistema. Busca rápida, comandas, caixa, relatórios e recibos em um fluxo pensado para recepção e operação.</p>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+  <script>window.MENUFLOW_VERSION = {{ app_version|tojson }};</script>
+  <script src="{{ url_for('static', filename='js/admin.js', v=app_version) }}"></script>
+</body>
+</html>

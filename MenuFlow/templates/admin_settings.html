@@ -1,0 +1,168 @@
+{% extends "admin_shell.html" %}
+{% set page = 'settings' %}
+{% block content %}
+  <header class="page-head">
+    <div>
+      <small>Configurações</small>
+      <h2>Identidade do restaurante + pagamentos</h2>
+      <p>O cliente (celular) pode seguir o design do restaurante. O admin mantém o padrão do MenuFlow com configurações persistentes.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn primary" id="saveSettings" type="button">Salvar</button>
+    </div>
+  </header>
+
+  <section class="content-grid">
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Cliente (celular)</h3>
+          <p>Nome, frase e cor principal do cardápio.</p>
+        </div>
+        <span class="admin-chip">tema</span>
+      </div>
+      <div class="panel__body">
+        <div class="form-grid">
+          <label class="field">
+            <span>Nome do restaurante</span>
+            <input id="s_restaurant_name" value="{{ settings['restaurant_name'] }}"/>
+          </label>
+          <label class="field">
+            <span>Frase de topo</span>
+            <input id="s_restaurant_tagline" value="{{ settings['restaurant_tagline'] }}"/>
+          </label>
+          <label class="field">
+            <span>Cor principal</span>
+            <input id="s_client_primary" value="{{ settings['client_primary'] }}" placeholder="#5B5AF7"/>
+          </label>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Pix manual (fallback)</h3>
+          <p>Modo antigo por chave Pix. Use como reserva caso o Asaas ainda não esteja ativado.</p>
+        </div>
+        <span class="admin-chip">pagamento</span>
+      </div>
+      <div class="panel__body">
+        <div class="form-grid">
+          <label class="field">
+            <span>Chave Pix</span>
+            <input id="s_pix_key" value="{{ settings['pix_key'] }}" placeholder="email/telefone/cpf/cnpj/chave aleatória"/>
+          </label>
+          <label class="field">
+            <span>Nome (recebedor)</span>
+            <input id="s_pix_merchant_name" value="{{ settings['pix_merchant_name'] }}"/>
+          </label>
+          <label class="field">
+            <span>Cidade</span>
+            <input id="s_pix_merchant_city" value="{{ settings['pix_merchant_city'] }}"/>
+          </label>
+          <label class="field">
+            <span>Prefixo TXID</span>
+            <input id="s_pix_txid_prefix" value="{{ settings['pix_txid_prefix'] }}"/>
+          </label>
+        </div>
+        <div class="helper-list" style="margin-top:10px">
+          <div><strong>Dica:</strong> depois de salvar, atualize o /client no celular para ver a cor/tema e o pagamento funcionando.</div>
+        </div>
+      </div>
+        </article>
+
+
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Pix automático via Asaas</h3>
+          <p>Quando ativado, o cliente paga por QR Code dinâmico e o MenuFlow tenta dar baixa automática por webhook.</p>
+        </div>
+        <span class="admin-chip">automação</span>
+      </div>
+      <div class="panel__body">
+        <div class="form-grid">
+          <label class="field">
+            <span>Ativar Asaas</span>
+            <select id="s_asaas_enabled">
+              <option value="0" {% if settings['asaas_enabled'] != '1' %}selected{% endif %}>Não</option>
+              <option value="1" {% if settings['asaas_enabled'] == '1' %}selected{% endif %}>Sim</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Ambiente</span>
+            <select id="s_asaas_env">
+              <option value="sandbox" {% if settings['asaas_env'] != 'production' %}selected{% endif %}>Sandbox</option>
+              <option value="production" {% if settings['asaas_env'] == 'production' %}selected{% endif %}>Produção</option>
+            </select>
+          </label>
+          <label class="field field--span-2">
+            <span>API Key do Asaas</span>
+            <input id="s_asaas_api_key" value="{{ settings['asaas_api_key'] }}" placeholder="$aact_..."/>
+          </label>
+          <label class="field field--span-2">
+            <span>URL pública do webhook</span>
+            <input id="s_asaas_webhook_url" value="{{ settings['asaas_webhook_url'] }}" placeholder="https://seu-link-ou-dominio/webhooks/asaas"/>
+          </label>
+          <label class="field field--span-2">
+            <span>Token do webhook</span>
+            <input id="s_asaas_webhook_token" value="{{ settings['asaas_webhook_token'] }}" placeholder="Token de autenticação enviado no header asaas-access-token"/>
+          </label>
+          <label class="field field--span-2">
+            <span>Email para alertas do webhook</span>
+            <input id="s_asaas_webhook_email" value="{{ settings['asaas_webhook_email'] }}" placeholder="financeiro@restaurante.com"/>
+          </label>
+        </div>
+        <div class="helper-list" style="margin-top:10px">
+          <div><strong>Fluxo:</strong> cliente gera o Pix pelo celular, paga, e o sistema tenta confirmar automaticamente via Asaas.</div>
+          <div><strong>Webhook do MenuFlow:</strong> <code>/webhooks/asaas</code></div>
+          <div><strong>Observação:</strong> se o webhook ainda não estiver configurado, o MenuFlow ainda tenta consultar o status da cobrança no Asaas durante o acompanhamento.</div>
+        </div>
+        <div class="toolbar" style="margin-top:14px">
+          <button class="btn ghost" id="registerAsaasWebhookBtn" type="button">Cadastrar webhook no Asaas</button>
+        </div>
+      </div>
+    </article>
+
+
+    <article class="panel panel--wide">
+      <div class="panel__head">
+        <div>
+          <h3>Logo do restaurante</h3>
+          <p>Envie uma logo para sair na comanda, comprovantes e impressões.</p>
+        </div>
+        <span class="admin-chip">branding</span>
+      </div>
+      <div class="panel__body">
+        <div class="logo-config">
+          <div class="logo-preview-card" id="logoPreviewCard">
+            <div class="logo-preview-inner">
+              {% if settings['logo_data_uri'] %}<img id="logoPreviewImg" src="{{ settings['logo_data_uri'] }}" alt="Logo do restaurante"/>{% else %}<div class="logo-placeholder" id="logoPreviewPlaceholder">Sem logo</div><img id="logoPreviewImg" alt="Logo do restaurante" style="display:none"/>{% endif %}
+            </div>
+            <small id="logoFileName">{{ settings['logo_file_name'] or 'Nenhum arquivo enviado' }}</small>
+          </div>
+          <div class="logo-actions">
+            <label class="btn ghost file-btn">
+              <input id="logoFileInput" type="file" accept="image/png,image/jpeg,image/jpg,image/webp" hidden/>
+              Enviar logo
+            </label>
+            <button class="btn ghost" id="removeLogoBtn" type="button">Remover</button>
+            <p class="field-help">PNG, JPG ou WEBP até 2 MB. A logo fica salva no sistema.</p>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <aside class="side-stack">
+      <article class="panel accent-panel">
+        <div class="panel__head"><h3>Identidade do sistema</h3><span class="admin-chip">PARADevs</span></div>
+        <div class="panel__body helper-list compact">
+          <div><strong>{{ system_brand }}</strong></div>
+          <div>{{ author }}</div>
+          <div>Admin padrão em todos os clientes.</div>
+        </div>
+      </article>
+    </aside>
+  </section>
+{% endblock %}
